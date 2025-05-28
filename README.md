@@ -3,6 +3,9 @@ Author: Tej Patel
 #Date: 9th May 2025
 #Purpose: To create the first draft of the Math Quiz
 
+ver.1.2.0
+- Pop Up Windows
+
 ver.1.1.0
 - Validity Checking
     - Special Letters (Symbols)
@@ -16,24 +19,39 @@ from tkinter import *
 
 num = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
+def create_error_window(error_message):
+    error_window = Toplevel(app)
+    error_window.title("Warning")
+    error_window.geometry("200x150")
+    error_window.resizable(True, True)
+    error_window_warning = Label (error_window, text = error_message, font = ("Times New Roman", 16))
+    error_window_warning.place (relx=0.3, rely=0.1)
+
+    error_window_warning.config(text=error_message)
+    
+
 def input_validator(user_input):
 
     # Blanks
     if user_input == "":
+        create_error_window("Blank!")
         blank = Label(app, text = "Blank!", fg = "red", font = ("Times New Roman", 16))
         blank.place(relx = 0.4, rely = 0.1)
        
     # Alphabet, Whitespace, and Symbols
     elif user_input.isdigit() == False:
         if user_input.isalnum() == True:
+            create_error_window("No Alphabet!")
             alphabet = Label(app, text = "No Alphabet!", fg = "red", font = ("Times New Roman", 16))
             alphabet.place(relx = 0.4, rely = 0.1)
            
         elif " " in user_input:
+            create_error_window("Whitespace!")
             whitespace = Label(app, text = "Whitespace!", fg = "red", font = ("Times New Roman", 16))
             whitespace.place(relx = 0.4, rely = 0.1)
            
         else:
+            create_error_window("Symbols!")
             symbols = Label(app, text = "Symbols!", fg = "red", font = ("Times New Roman", 16))
             symbols.place(relx = 0.4, rely = 0.1)
            
