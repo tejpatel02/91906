@@ -1,11 +1,12 @@
 '''
 Author: Tej Patel
 Date Created: 06/06/2025
-Last Date Modified: 25/06/2025
+Last Date Modified: 26/06/2025
 Purpose: Create a math quiz program to test the user on a variety of math questions.
 '''
 
 from tkinter import *
+from tkinter import messagebox
 import random
 
 
@@ -54,13 +55,49 @@ def build_difficulty_window():
 
 def end_program():
     welcome_window.destroy()
+    difficulty_window.destroy()
+    basic_window.destroy()
 
 def basic_questions():
+
+    def generate_basic_question():
+        global basic_answer
+        num1 = random.randint(1,12)
+        num2 = random.randint(1,12)
+        basic_answer = num1 * num2
+        basic_question.config(text=f"What is {num1} x {num2}?")
+
+    def check_basic_answer():
+        basic_user_answer = basic_entry.get()
+        if basic_user_answer == "":
+            messagebox.showerror(title="Invalid", message="You cannot leave this field blank")
+        elif int(basic_user_answer) == basic_answer:
+            messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
+            generate_basic_question()
+        else:
+            messagebox.showerror(title="Incorrect", message="Incorrect Answer. Try Again!")
+        basic_entry.delete(0, 'end')
+
+            
     basic_window.deiconify()
     difficulty_window.withdraw()
 
     basic_question = Label(basic_window, font=("Times New Roman", 30))
-    basic_question.pack
+    basic_question.pack(pady=30)
+
+    basic_entry = Entry(basic_window, font=("Times New Roman", 30))
+    basic_entry.pack(pady=30)
+
+    basic_submit = Button(basic_window, text="Submit", font=("Times New Roman", 30))
+    basic_submit.pack(pady=30)
+
+    exit_button = Button(basic_window, text="Exit", command=end_program, width=15, borderwidth=2, font=("Times New Roman", 12))
+
+    basic_submit.config(command=check_basic_answer)
+
+    generate_basic_question()
+
+    
     
     
     
@@ -75,3 +112,4 @@ def expert_questions():
 
 build_welcome_window()
 welcome_window.mainloop()
+
