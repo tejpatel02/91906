@@ -1,28 +1,34 @@
 '''
 Author: Tej Patel
 Date Created: 06/06/2025
-Last Date Modified: 26/06/2025
+Last Date Modified: 25/06/2025
 Purpose: Create a math quiz program to test the user on a variety of math questions.
 '''
 
 from tkinter import *
 from tkinter import messagebox
 import random
+from PIL import Image, ImageTk
 
 
 welcome_window = Tk()
 welcome_window.title("Welcome to the Marvelous Math Quiz")
 welcome_window.geometry("800x500")
 
-difficulty_window = Tk()
+difficulty_window = Toplevel(welcome_window)
 difficulty_window.title("Select Difficulty")
 difficulty_window.geometry("600x400") 
 difficulty_window.withdraw()
 
-basic_window = Tk()
+basic_window = Toplevel(welcome_window)
 basic_window.title("Basic Questions")
 basic_window.geometry("800x500")
 basic_window.withdraw()
+
+advanced_window = Toplevel(welcome_window)
+advanced_window.title("Advanced Questions")
+advanced_window.geometry("800x600")
+advanced_window.withdraw()
 
 
 def build_welcome_window():
@@ -55,8 +61,6 @@ def build_difficulty_window():
 
 def end_program():
     welcome_window.destroy()
-    difficulty_window.destroy()
-    basic_window.destroy()
 
 def basic_questions():
 
@@ -68,10 +72,8 @@ def basic_questions():
         basic_question.config(text=f"What is {num1} x {num2}?")
 
     def check_basic_answer():
-        basic_user_answer = basic_entry.get()
-        if basic_user_answer == "":
-            messagebox.showerror(title="Invalid", message="You cannot leave this field blank")
-        elif int(basic_user_answer) == basic_answer:
+        basic_user_answer = int(basic_entry.get())
+        if basic_user_answer == basic_answer:
             messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
             generate_basic_question()
         else:
@@ -82,16 +84,14 @@ def basic_questions():
     basic_window.deiconify()
     difficulty_window.withdraw()
 
-    basic_question = Label(basic_window, font=("Times New Roman", 30))
+    basic_question = Label(basic_window, font=("Times New Roman", 20))
     basic_question.pack(pady=30)
 
     basic_entry = Entry(basic_window, font=("Times New Roman", 30))
     basic_entry.pack(pady=30)
 
-    basic_submit = Button(basic_window, text="Submit", font=("Times New Roman", 30))
+    basic_submit = Button(basic_window, text="Submit", font=("Times New Roman", 15))
     basic_submit.pack(pady=30)
-
-    exit_button = Button(basic_window, text="Exit", command=end_program, width=15, borderwidth=2, font=("Times New Roman", 12))
 
     basic_submit.config(command=check_basic_answer)
 
@@ -100,10 +100,59 @@ def basic_questions():
     
     
     
-    
-
 def advanced_questions():
-    print("")
+    advanced_window.deiconify()
+    difficulty_window.withdraw()
+    
+    advanced_questions = ["What is the area of this shape?",
+                          "What is the length of side x?",
+                          "What is x-intercept of this parabola?",
+                          "What is x-coordinate of the point of inflexion?"]
+    advanced_answers = ["24", "5", "4", "2"]
+    advanced_question_images = ["q1.png", "q2.png", "q3.png", "q4.png"]
+
+
+    current_question = random.randint(0, len(advanced_questions) - 1)
+
+    def generate_advanced_question():
+        nonlocal current_question
+        current_question = random.randint(0, len(advanced_questions) - 1)
+        advanced_question.config(text=advanced_questions[current_question])
+
+        img = Image.open(advanced_question_images[current_question])
+        img = img.resize((400, 300))
+        photo = ImageTk.PhotoImage(img)
+        advanced_image.config(image=photo)
+        advanced_image.image = photo
+
+    def check_advanced_answer():
+        advanced_user_answer = advanced_entry.get()
+        if advanced_user_answer == advanced_answers[current_question]:
+            messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
+            advanced_entry.delete(0, 'end')
+            generate_advanced_question()
+        else:
+            messagebox.showerror(title="Incorrect", message="Incorrect Answer. Try again.")
+            advanced_entry.delete(0, 'end')
+        
+
+    advanced_question = Label(advanced_window, font=("Times New Roman", 30))
+    advanced_question.pack(pady=20)
+
+    advanced_entry = Entry(advanced_window, font=("Times New Roman", 30))
+    advanced_entry.pack(pady=20)
+
+    advanced_image = Label(advanced_window)
+    advanced_image.pack(pady=20)
+    
+    advanced_submit = Button(advanced_window, text="Submit", width=15, height=2, font=("Times New Roman", 12))
+    advanced_submit.pack(pady=20)
+
+    advanced_submit.config(command=check_advanced_answer)
+    
+    generate_advanced_question()
+
+    
 
 def expert_questions():
     print("")
@@ -112,4 +161,3 @@ def expert_questions():
 
 build_welcome_window()
 welcome_window.mainloop()
-
