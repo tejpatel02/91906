@@ -65,6 +65,13 @@ scoreboard_window.configure(bg="#e6f2ff")
 scoreboard_window.resizable(False, False)
 scoreboard_window.withdraw()
 
+leaderboard_window = Toplevel(welcome_window)
+leaderboard_window.title("Leaderboard")
+leaderboard_window.geometry("800x400")
+leaderboard_window.configure(bg="#e6f2ff")
+leaderboard_window.resizable(False, False)
+leaderboard_window.withdraw()
+
 def build_welcome_window():  # This function creates the welcome window and all its widgets.
     global name_entry
     
@@ -116,36 +123,65 @@ def name_entry_validation():  # This function validates the name input before st
 def end_program():  # This function ends the entire quiz program.
     welcome_window.destroy()
 
+def save_basic_score():
+    name = name_entry.get()
+    score = scores["basic"]
+    with open("score.txt", "a") as file:
+        file.write(f"{name} - Basic: {score}\n")
+
+def save_advanced_score():
+    name = name_entry.get()
+    score = scores["advanced"]
+    with open("score.txt", "a") as file:
+        file.write(f"{name} - Advanced: {score}\n")
+
+def save_expert_score():
+    name = name_entry.get()
+    score = scores["expert"]
+    with open("score.txt", "a") as file:
+        file.write(f"{name} - Expert: {score}\n")
+        
+
 # Scoreboard functions show final score and allow exit.
 def show_basic_scoreboard():
     basic_window.withdraw()
     scoreboard_window.deiconify()
+    save_basic_score()
     basic_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     basic_score_label.pack(pady=20)
     basic_score_display = Label(scoreboard_window, text=f"Score: {scores['basic']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     basic_score_display.pack(pady=20)
     basic_exit = Button(scoreboard_window, text="Exit", command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
     basic_exit.pack(pady=20)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    leaderboard_button.pack(pady=10)
 
 def show_advanced_scoreboard():
     advanced_window.withdraw()
     scoreboard_window.deiconify()
+    save_advanced_score()
     advanced_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     advanced_score_label.pack(pady=20)
     advanced_score_display = Label(scoreboard_window, text=f"Score: {scores['advanced']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     advanced_score_display.pack(pady=20)
     advanced_exit = Button(scoreboard_window, text="Exit",  command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
     advanced_exit.pack(pady=20)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    leaderboard_button.pack(pady=10)
 
+    
 def show_expert_scoreboard():
     expert_window.withdraw()
     scoreboard_window.deiconify()
+    save_expert_score()
     expert_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     expert_score_label.pack(pady=20)
     expert_score_display = Label(scoreboard_window, text=f"Score: {scores['expert']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
     expert_score_display.pack(pady=20)
     expert_exit = Button(scoreboard_window, text="Exit",  command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
     expert_exit.pack(pady=20)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    leaderboard_button.pack(pady=10)
 
     
 def end_program():
@@ -263,6 +299,9 @@ def advanced_questions():
     def generate_advanced_question():
         # Randomly select an advanced question from remaining questions.
         global current_advanced_question
+        if not remaining_advanced_questions:  # Check if list is empty
+            show_advanced_scoreboard()         # Show scoreboard if no questions left
+            return
         current_advanced_question = random.choice(remaining_advanced_questions)
         remaining_advanced_questions.remove(current_advanced_question)
 
@@ -317,7 +356,7 @@ def advanced_questions():
         advanced_entry.delete(0, 'end')
 
         # After 10 skips or questions, show scoreboard; else next question.
-        if advanced_question_count >= 10:
+        if advanced_question_count >= 10 or not remaining_advanced_questions:
             show_advanced_scoreboard()
         else:
             generate_advanced_question()
@@ -329,7 +368,7 @@ def advanced_questions():
     advanced_image = Label(advanced_window)
     advanced_image.pack(pady=15)
 
-    advanced_entry = Entry(advanced_window, font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147")
+    advanced_entry = Entry(advanced_window, font=("Times New Roman", 15), bg="white", fg="#002147")
     advanced_entry.pack(pady=15)
 
     advanced_submit = Button(advanced_window, text="Submit", width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
@@ -374,6 +413,9 @@ def expert_questions():
     def generate_expert_question():
         # Randomly select an expert question from remaining questions.
         global current_expert_question
+        if not remaining_expert_questions:  # Check if list is empty
+            show_expert_scoreboard()         # Show scoreboard if no questions left
+            return
         current_expert_question = random.choice(remaining_expert_questions)
         remaining_expert_questions.remove(current_expert_question)
 
@@ -427,7 +469,7 @@ def expert_questions():
         expert_entry.delete(0, 'end')
 
         # After 10 questions/skips, show the scoreboard; else next question.
-        if expert_question_count >= 10:
+        if expert_question_count >= 10 or not remaining_expert_questions:
             show_expert_scoreboard()
         else:
             generate_expert_question()
@@ -456,6 +498,27 @@ def expert_questions():
     
     # Generate the first expert question to begin.
     generate_expert_question()
+
+def show_leaderboard():
+    # Show leaderboard window and hide the scoreboard
+    leaderboard_window.deiconify()
+    scoreboard_window.withdraw()
+
+    # Heading label
+    heading = Label(leaderboard_window, text="Marvelous Math Quiz Leaderboard", font=("Times New Roman", 25), bg="#e6f2ff", fg="#002147")
+    heading.pack(pady=20)
+
+    # Read scores from the file and display them
+    with open("score.txt", "r") as file:
+        scores = file.readlines()
+        for line in scores:
+            score_label = Label(leaderboard_window, text=line.strip(), font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147")
+            score_label.pack()
+
+    # Exit button to end program
+    exit_button = Button(leaderboard_window, text="Exit", command=end_program, font=("Times New Roman", 15), bg="#004080", fg="white")
+    exit_button.pack(pady=20)
+
 
 
 # Run the code by creating the welcome window and running the mainloop. 
