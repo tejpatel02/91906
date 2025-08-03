@@ -1,7 +1,7 @@
 '''
 Author: Tej Patel
 Date Created: 06/06/2025
-Last Date Modified: 21/07/2025
+Last Date Modified: 03/08/2025
 Purpose: Create a math quiz program to test the user on a variety of math questions.
 '''
 
@@ -9,14 +9,10 @@ Purpose: Create a math quiz program to test the user on a variety of math questi
 from tkinter import *
 from tkinter import messagebox
 import random
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageSequence
 
 # Set up a dictionary to keep track of scores for different difficulty levels.
-scores = {
-    "basic": 0,
-    "advanced": 0,
-    "expert": 0
-}
+scores = {"basic": 0, "advanced": 0, "expert": 0}
 
 # Set up counters for advanced and expert questions to control the question limit.
 advanced_question_count = 0
@@ -24,44 +20,38 @@ expert_question_count = 0
 
 # Create all the required windows for the GUI, with initial settings.
 welcome_window = Tk()
-welcome_window.title("Welcome to the Marvelous Math Quiz")
+welcome_window.title("Welcome to The Counting Kingdom")
 welcome_window.geometry("800x500")
-welcome_window.configure(bg="#e6f2ff")
 welcome_window.resizable(False, False)
 
 # Additional windows are created but hidden at first.
 difficulty_window = Toplevel(welcome_window)
 difficulty_window.title("Select Difficulty")
 difficulty_window.geometry("600x400")
-difficulty_window.configure(bg="#e6f2ff")
 difficulty_window.resizable(False, False)
 difficulty_window.withdraw()
 
 basic_window = Toplevel(welcome_window)
-basic_window.title("Basic Questions")
+basic_window.title("Basic Battle")
 basic_window.geometry("800x500")
-basic_window.configure(bg="#e6f2ff")
 basic_window.resizable(False, False)
 basic_window.withdraw()
 
 advanced_window = Toplevel(welcome_window)
-advanced_window.title("Advanced Questions")
-advanced_window.geometry("800x600")
-advanced_window.configure(bg="#e6f2ff")
+advanced_window.title("Advanced Academy")
+advanced_window.geometry("850x650")
 advanced_window.resizable(False, False)
 advanced_window.withdraw()
 
 expert_window = Toplevel(welcome_window)
-expert_window.title("Expert Questions")
-expert_window.geometry("800x600")
-expert_window.configure(bg="#e6f2ff")
+expert_window.title("Expert Endeavour")
+expert_window.geometry("850x650")
 expert_window.resizable(False, False)
 expert_window.withdraw()
 
 scoreboard_window = Toplevel(welcome_window)
 scoreboard_window.title("Scoreboard")
 scoreboard_window.geometry("800x300")
-scoreboard_window.configure(bg="#e6f2ff")
 scoreboard_window.resizable(False, False)
 scoreboard_window.withdraw()
 
@@ -74,45 +64,64 @@ leaderboard_window.withdraw()
 
 def build_welcome_window():  # This function creates the welcome window and all its widgets.
     global name_entry
+
+    bg_welcome_image = Image.open("the_counting_kingdom.jpg")
+    bg_welcome_image = bg_welcome_image.resize((800, 500))
+    bg_welcome_photo = ImageTk.PhotoImage(bg_welcome_image)
+    background_label = Label(welcome_window, image=bg_welcome_photo)
+    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+    background_label.image = bg_welcome_photo
     
     # Display welcome messages and buttons for starting or exiting the quiz.
-    welcome = Label(welcome_window, text="Welcome!", font=("Times New Roman", 40), bg="#e6f2ff", fg="#002147")
-    welcome.pack(pady=20)
-    instructions = Label(welcome_window, text="Try your best to answer the questions. Good Luck!", font=("Georgia", 20), bg="#e6f2ff", fg="#002147")
-    instructions.pack(pady=30)
+    instructions = Label(welcome_window, text="You are the last hope of The Counting Kingdom. \nAnswer Questions correct to defeat The Mighty Algeblaze!", font=("Georgia", 13), bg="#e6f2ff", fg="#002147")
+    instructions.place(relx=0.5, rely=0.55, anchor="center")
     
     # Entry field for the user's name.
     name_entry = Entry(welcome_window, width=17, font=("Times New Roman", 12))
-    name_entry.place(relx=0.5, rely=0.65, anchor="center")
-    enter_name = Label(welcome_window, text="Please enter your name:", font=("Georgia", 15), bg="#e6f2ff", fg="#002147")
-    enter_name.place(relx=0.5, rely=0.5, anchor="center")
+    name_entry.place(relx=0.5, rely=0.72, anchor="center")
+    enter_name = Label(welcome_window, text="Please enter your name:", font=("Georgia", 12), bg="#e6f2ff", fg="#002147")
+    enter_name.place(relx=0.5, rely=0.65, anchor="center")
     
     # Buttons to start the quiz or exit the program.
     start_button = Button(welcome_window, text="Start", command=name_entry_validation, width=15, borderwidth=2, font=("Times New Roman", 12), bg="#004080", fg="white")
-    start_button.place(relx=0.4, rely=0.8, anchor="center")
+    start_button.place(relx=0.4, rely=0.85, anchor="center")
     exit_button = Button(welcome_window, text="Exit", command=end_program, width=15, borderwidth=2, font=("Times New Roman", 12), bg="#004080", fg="white")
-    exit_button.place(relx=0.6, rely=0.8, anchor="center")
+    exit_button.place(relx=0.6, rely=0.85, anchor="center")
+
+    welcome_window.bind('<Return>', lambda event: name_entry_validation())
 
 def build_difficulty_window():  # This function builds the difficulty selection screen.
     difficulty_window.deiconify()
     welcome_window.withdraw()
 
+    bg_difficulty_image = Image.open("kingdom_pathway.jpg")  # Replace with your image filename
+    bg_difficulty_image = bg_difficulty_image.resize((600, 400))      # Resize to window size
+    bg_difficulty_photo = ImageTk.PhotoImage(bg_difficulty_image)
+
+    # Create label for background image
+    bg_difficulty_label = Label(difficulty_window, image=bg_difficulty_photo)
+    bg_difficulty_label.image = bg_difficulty_photo  # Keep a reference so image isn't garbage collected
+    bg_difficulty_label.place(x=0, y=0, relwidth=1, relheight=1)
+
     # Display difficulty options for the quiz.
-    select_difficulty = Label(difficulty_window, text="Please a Select Difficulty!", font=("Times New Roman", 30), bg="#e6f2ff", fg="#002147")
-    select_difficulty.pack(pady=30)
+    select_difficulty = Label(difficulty_window, text="Please Select a Challenge!", font=("Times New Roman", 30), bg="#e6f2ff", fg="#002147")
+    select_difficulty.pack(pady=20)
 
     # Buttons for each difficulty level.
-    basic_difficulty = Button(difficulty_window, text="Basic", command=basic_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 12), bg="#004080", fg="white")
+    basic_difficulty = Button(difficulty_window, text="Basic Battle", command=basic_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 14), bg="#004080", fg="white")
     basic_difficulty.place(relx=0.5, rely=0.40, anchor="center")
-    advanced_difficulty = Button(difficulty_window, text="Advanced", command=advanced_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 12), bg="#004080", fg="white")
+    advanced_difficulty = Button(difficulty_window, text="Advanced Academy", command=advanced_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 14), bg="#004080", fg="white")
     advanced_difficulty.place(relx=0.5, rely=0.6, anchor="center")
-    expert_difficulty = Button(difficulty_window, text="Expert", command=expert_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 12), bg="#004080", fg="white")
+    expert_difficulty = Button(difficulty_window, text="Expert Endeavour", command=expert_questions, width=20, height=2, borderwidth=2, font=("Times New Roman", 14), bg="#004080", fg="white")
     expert_difficulty.place(relx=0.5, rely=0.80, anchor="center")
 
 def name_entry_validation():  # This function validates the name input before starting the quiz.
     name_check = name_entry.get()
     if name_check == "":
         messagebox.showerror(title="Invalid Input", message="You cannot leave your name blank. Try again.")
+        name_entry.delete(0, 'end')
+    elif len(name_check) > 15:
+        messagebox.showerror("Invalid Input", "The entered name cannot exceed 15 characters. Try again.")
         name_entry.delete(0, 'end')
     elif not name_check.replace(" ", "").replace("-", "").isalpha():
         messagebox.showerror(title="Invalid Input", message="The name entered must only contain letters. Try again.")
@@ -146,52 +155,122 @@ def save_expert_score():
 def show_basic_scoreboard():
     basic_window.withdraw()
     scoreboard_window.deiconify()
-    save_basic_score()
-    basic_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    basic_score_label.pack(pady=20)
+    basic_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
+    basic_score_label.pack(pady=10)
     basic_score_display = Label(scoreboard_window, text=f"Score: {scores['basic']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    basic_score_display.pack(pady=20)
-    basic_exit = Button(scoreboard_window, text="Exit", command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
-    basic_exit.pack(pady=20)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    basic_score_display.pack(pady=10)
+    basic_exit = Button(scoreboard_window, text="Exit", command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
+    basic_exit.pack(pady=10)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
     leaderboard_button.pack(pady=10)
+    if scores["basic"] >= 70:
+        save_basic_score()
+        basic_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
+
+        basic_result_image = Image.open("winner.jpg")
+        basic_result_image = basic_result_image.resize((800, 457))
+        basic_result_photo = ImageTk.PhotoImage(basic_result_image)
+        basic_result_label = Label(scoreboard_window, image=basic_result_photo)
+        basic_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        basic_result_label.image = basic_result_photo
+        basic_result_label.lower()
+        
+    else:
+        basic_score_label.config(text=f"Sorry {name_entry.get()}! \nYou were not able to save The Counting Kingdom from Algeblaze!")
+
+        basic_result_image = Image.open("loser.jpg")
+        basic_result_image = basic_result_image.resize((800, 457))
+        basic_result_photo = ImageTk.PhotoImage(basic_result_image)
+        basic_result_label = Label(scoreboard_window, image=basic_result_photo)
+        basic_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        basic_result_label.image = basic_result_photo
+        basic_result_label.lower()
 
 def show_advanced_scoreboard():
     advanced_window.withdraw()
     scoreboard_window.deiconify()
-    save_advanced_score()
-    advanced_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    advanced_score_label.pack(pady=20)
+    advanced_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
+    advanced_score_label.pack(pady=10)
     advanced_score_display = Label(scoreboard_window, text=f"Score: {scores['advanced']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    advanced_score_display.pack(pady=20)
-    advanced_exit = Button(scoreboard_window, text="Exit",  command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
-    advanced_exit.pack(pady=20)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    advanced_score_display.pack()
+    advanced_exit = Button(scoreboard_window, text="Exit",  command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
+    advanced_exit.pack(pady=10)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
     leaderboard_button.pack(pady=10)
+    if scores["advanced"] >= 140:
+        save_advanced_score()
+        advanced_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
 
+        advanced_result_image = Image.open("winner.jpg")
+        advanced_result_image = advanced_result_image.resize((800, 457))
+        advanced_result_photo = ImageTk.PhotoImage(advanced_result_image)
+        advanced_result_label = Label(scoreboard_window, image=advanced_result_photo)
+        advanced_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        advanced_result_label.image = advanced_result_photo
+        advanced_result_label.lower()
+        
+    else:
+        advanced_score_label.config(text=f"Sorry {name_entry.get()}! \nYou were not able to save The Counting Kingdom from Algeblaze!")
+
+        advanced_result_image = Image.open("loser.jpg")
+        advanced_result_image = advanced_result_image.resize((800, 457))
+        advanced_result_photo = ImageTk.PhotoImage(advanced_result_image)
+        advanced_result_label = Label(scoreboard_window, image=advanced_result_photo)
+        advanced_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        advanced_result_label.image = advanced_result_photo
+        advanced_result_label.lower()
     
 def show_expert_scoreboard():
     expert_window.withdraw()
     scoreboard_window.deiconify()
-    save_expert_score()
-    expert_score_label = Label(scoreboard_window, text=f"Congratulations {name_entry.get()}! You completed the Marvelous Math Quiz", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    expert_score_label.pack(pady=20)
+    expert_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
+    expert_score_label.pack(pady=10)
     expert_score_display = Label(scoreboard_window, text=f"Score: {scores['expert']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    expert_score_display.pack(pady=20)
-    expert_exit = Button(scoreboard_window, text="Exit",  command=end_program, font=("Times New Roman", 20), bg="#004080", fg="white")
-    expert_exit.pack(pady=20)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, font=("Times New Roman", 15), bg="#009933", fg="white")
+    expert_score_display.pack(pady=10)
+    expert_exit = Button(scoreboard_window, text="Exit",  command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
+    expert_exit.pack(pady=10)
+    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
     leaderboard_button.pack(pady=10)
+    if scores["expert"] >= 210:
+        save_expert_score()
+        expert_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
 
+        expert_result_image = Image.open("winner.jpg")
+        expert_result_image = expert_result_image.resize((800, 457))
+        expert_result_photo = ImageTk.PhotoImage(expert_result_image)
+        expert_result_label = Label(scoreboard_window, image=expert_result_photo)
+        expert_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        expert_result_label.image = expert_result_photo
+        expert_result_label.lower()
+        
+    else:
+        expert_score_label.config(text=f"Sorry {name_entry.get()}! \nYou were not able to save The Counting Kingdom from Algeblaze!")
+
+        expert_result_image = Image.open("loser.jpg")
+        expert_result_image = expert_result_image.resize((800, 457))
+        expert_result_photo = ImageTk.PhotoImage(expert_result_image)
+        expert_result_label = Label(scoreboard_window, image=expert_result_photo)
+        expert_result_label.place(x=0, y=0, relwidth=1, relheight=1)
+        expert_result_label.image = expert_result_photo
+        expert_result_label.lower()
     
 def end_program():
     # Ends the entire program by closing the welcome window and exiting the application.
-    welcome_window.destroy()
+    confirm = messagebox.askyesno("Exit Program", "Are you sure you want to exit?")
+    if confirm:
+        welcome_window.destroy()
 
 def basic_questions():
     # Initialize counter for number of basic questions answered/skipped.
     global basic_question_count
     basic_question_count = 0
+
+    bg_basic_image = Image.open("dragon1.jpg")
+    bg_basic_image = bg_basic_image.resize((800, 500))
+    bg_basic_photo = ImageTk.PhotoImage(bg_basic_image)
+    bg_basic_label = Label(basic_window, image=bg_basic_photo)
+    bg_basic_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_basic_label.image = bg_basic_photo
 
     def generate_basic_question():
         # Generate a random multiplication question with two numbers between 1 and 12.
@@ -217,7 +296,9 @@ def basic_questions():
             # Check if user's answer matches the correct answer.
             if int(basic_user_answer) == basic_answer:
                 # If correct, update score and question display.
-                messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
+                basic_feedback.lift()
+                basic_feedback.config(text="✅ Correct!", fg="green")
+                basic_feedback.after(2000, lambda: (basic_feedback.config(text=""), basic_feedback.lower()))
                 basic_question_count += 1
                 scores["basic"] += 10
                 current_basic_score = scores["basic"]
@@ -231,7 +312,9 @@ def basic_questions():
                     generate_basic_question()
             else:
                 # If answer is incorrect, show error and let user try again.
-                messagebox.showerror(title="Incorrect", message="Incorrect Answer. Try Again!")
+                basic_feedback.lift()
+                basic_feedback.config(text="❌ Incorrect", fg="red")
+                basic_feedback.after(2000, lambda: (basic_feedback.config(text=""), basic_feedback.lower()))
                 basic_entry.delete(0, 'end')
 
     def skip_basic_question():
@@ -256,6 +339,12 @@ def basic_questions():
 
     basic_entry = Entry(basic_window, font=("Times New Roman", 30))
     basic_entry.pack(pady=30)
+
+    basic_window.bind("<Return>", lambda event: check_basic_answer())
+
+    basic_feedback = Label(basic_window, font=("Times New Roman", 15))
+    basic_feedback.pack()
+    basic_feedback.lower()
     
     basic_submit = Button(basic_window, text="Submit", width=15, font=("Times New Roman", 15), bg="#004080", fg="white", command=check_basic_answer)
     basic_submit.pack(pady=10)
@@ -278,6 +367,13 @@ def advanced_questions():
     advanced_window.deiconify()
     difficulty_window.withdraw()
 
+    bg_advanced_image = Image.open("dragon2.jpg")
+    bg_advanced_image = bg_advanced_image.resize((850, 650))
+    bg_advanced_photo = ImageTk.PhotoImage(bg_advanced_image)
+    bg_advanced_label = Label(advanced_window, image=bg_advanced_photo)
+    bg_advanced_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_advanced_label.image = bg_advanced_photo
+
     # List of advanced-level question dictionaries with question, answer, and image.
     advanced_question_data = [
         {"question": "What is the area of this shape?", "answer": "24", "image": "q1.png"},
@@ -299,8 +395,8 @@ def advanced_questions():
     def generate_advanced_question():
         # Randomly select an advanced question from remaining questions.
         global current_advanced_question
-        if not remaining_advanced_questions:  # Check if list is empty
-            show_advanced_scoreboard()         # Show scoreboard if no questions left
+        if not remaining_advanced_questions:
+            show_advanced_scoreboard()
             return
         current_advanced_question = random.choice(remaining_advanced_questions)
         remaining_advanced_questions.remove(current_advanced_question)
@@ -333,7 +429,9 @@ def advanced_questions():
             # Check if user's answer matches the correct answer.
             if advanced_user_answer == advanced_question_number["answer"]:
                 # If correct, update score and question display.
-                messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
+                advanced_feedback.lift()
+                advanced_feedback.config(text="✅ Correct!", fg="green")
+                advanced_feedback.after(2000, lambda: (advanced_feedback.config(text=""), advanced_feedback.lower()))
                 scores["advanced"] += 20
                 current_advanced_score = scores["advanced"]
                 advanced_score.config(text=f"Score: {current_advanced_score}")
@@ -346,7 +444,9 @@ def advanced_questions():
                     show_advanced_scoreboard()
             else:
                 # Show error message for incorrect answer.
-                messagebox.showerror(title="Incorrect", message="Incorrect Answer. Try again.")
+                advanced_feedback.lift()
+                advanced_feedback.config(text="❌ Incorrect", fg="red")
+                advanced_feedback.after(2000, lambda: (advanced_feedback.config(text=""), advanced_feedback.lower()))
                 advanced_entry.delete(0, 'end')
 
     def skip_advanced_question():
@@ -371,6 +471,12 @@ def advanced_questions():
     advanced_entry = Entry(advanced_window, font=("Times New Roman", 15), bg="white", fg="#002147")
     advanced_entry.pack(pady=15)
 
+    advanced_window.bind("<Return>", lambda event: check_advanced_answer())
+
+    advanced_feedback = Label(advanced_window, font=("Times New Roman", 15))
+    advanced_feedback.pack()
+    advanced_feedback.lower()
+
     advanced_submit = Button(advanced_window, text="Submit", width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
     advanced_submit.pack(pady=15)
 
@@ -391,6 +497,13 @@ def expert_questions():
     # Show the expert questions window and hide the difficulty selection.
     expert_window.deiconify()
     difficulty_window.withdraw()
+
+    bg_expert_image = Image.open("dragon3.jpg")
+    bg_expert_image = bg_expert_image.resize((850, 650))
+    bg_expert_photo = ImageTk.PhotoImage(bg_expert_image)
+    bg_expert_label = Label(expert_window, image=bg_expert_photo)
+    bg_expert_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_expert_label.image = bg_expert_photo
 
     # List of expert-level question dictionaries with question, answer, and image.
     expert_question_data = [
@@ -413,8 +526,8 @@ def expert_questions():
     def generate_expert_question():
         # Randomly select an expert question from remaining questions.
         global current_expert_question
-        if not remaining_expert_questions:  # Check if list is empty
-            show_expert_scoreboard()         # Show scoreboard if no questions left
+        if not remaining_expert_questions:  
+            show_expert_scoreboard()         
             return
         current_expert_question = random.choice(remaining_expert_questions)
         remaining_expert_questions.remove(current_expert_question)
@@ -445,7 +558,9 @@ def expert_questions():
             # Check if user's answer matches the correct answer.
             if expert_user_answer == expert_question_number["answer"]:
                 # If correct, update score and question display.
-                messagebox.showinfo(title="Correct", message="Correct Answer. Good Job!")
+                expert_feedback.lift()
+                expert_feedback.config(text="✅ Correct!", fg="green")
+                expert_feedback.after(2000, lambda: (expert_feedback.config(text=""), expert_feedback.lower()))
                 scores["expert"] += 30
                 current_expert_score = scores["expert"]
                 expert_score.config(text=f"Score: {current_expert_score}")
@@ -459,7 +574,9 @@ def expert_questions():
 
             else:
                 # Show error message for incorrect answer.
-                messagebox.showerror(title="Incorrect", message="Incorrect Answer. Try again.")
+                expert_feedback.lift()
+                expert_feedback.config(text="❌ Incorrect", fg="red")
+                expert_feedback.after(2000, lambda: (expert_feedback.config(text=""), expert_feedback.lower()))
                 expert_entry.delete(0, 'end')
 
     def skip_expert_question():
@@ -481,8 +598,14 @@ def expert_questions():
     expert_image = Label(expert_window)
     expert_image.pack(pady=15)
 
-    expert_entry = Entry(expert_window, font=("Times New Roman", 15))
+    expert_entry = Entry(expert_window, font=("Times New Roman", 15), bg="white", fg="#002147")
     expert_entry.pack(pady=15)
+
+    expert_window.bind("<Return>", lambda event: check_expert_answer())
+
+    expert_feedback = Label(expert_window, font=("Times New Roman", 15))
+    expert_feedback.pack()
+    expert_feedback.lower()
 
     expert_submit = Button(expert_window, text="Submit", width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
     expert_submit.pack(pady=15)
@@ -505,15 +628,15 @@ def show_leaderboard():
     scoreboard_window.withdraw()
 
     # Heading label
-    heading = Label(leaderboard_window, text="Marvelous Math Quiz Leaderboard", font=("Times New Roman", 25), bg="#e6f2ff", fg="#002147")
-    heading.pack(pady=20)
+    leaderboard_heading = Label(leaderboard_window, text="The Counting Kingdom's Saviours", font=("Times New Roman", 25), bg="#e6f2ff", fg="#002147")
+    leaderboard_heading.pack(pady=20)
 
     # Read scores from the file and display them
     with open("score.txt", "r") as file:
         scores = file.readlines()
         for line in scores:
-            score_label = Label(leaderboard_window, text=line.strip(), font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147")
-            score_label.pack()
+            leaderboard_score_label = Label(leaderboard_window, text=line.strip(), font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147")
+            leaderboard_score_label.pack()
 
     # Exit button to end program
     exit_button = Button(leaderboard_window, text="Exit", command=end_program, font=("Times New Roman", 15), bg="#004080", fg="white")
