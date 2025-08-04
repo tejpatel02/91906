@@ -11,13 +11,6 @@ from tkinter import messagebox
 import random
 from PIL import Image, ImageTk, ImageSequence
 
-# Set up a dictionary to keep track of scores for different difficulty levels.
-scores = {"basic": 0, "advanced": 0, "expert": 0}
-
-# Set up counters for advanced and expert questions to control the question limit.
-advanced_question_count = 0
-expert_question_count = 0
-
 # Create all the required windows for the GUI, with initial settings.
 welcome_window = Tk()
 welcome_window.title("Welcome to The Counting Kingdom")
@@ -58,9 +51,51 @@ scoreboard_window.withdraw()
 leaderboard_window = Toplevel(welcome_window)
 leaderboard_window.title("Leaderboard")
 leaderboard_window.geometry("800x400")
-leaderboard_window.configure(bg="#e6f2ff")
 leaderboard_window.resizable(False, False)
 leaderboard_window.withdraw()
+
+# Set up a dictionary to keep track of scores for different difficulty levels.
+scores = {"basic": 0, "advanced": 0, "expert": 0}
+
+# Set up counters for advanced and expert questions to control the question limit.
+advanced_question_count = 0
+expert_question_count = 0
+
+advanced_question_data = [
+    {"question": "What is the area of this shape?", "answer": "24", "image": "q1.png"},
+    {"question": "What is the length of side x?", "answer": "5", "image": "q2.png"},
+    {"question": "What is x-intercept of this parabola?", "answer": "4", "image": "q3.png"},
+    {"question": "What is x-coordinate of the point of inflexion?", "answer": "2", "image": "q4.png"},
+    {"question": "What is area of this parallelogram?", "answer": "150", "image": "q5.png"},
+    {"question": "What is gradient of this line?", "answer": "2", "image": "q6.png"},
+    {"question": "What is y-intercept of this parabola?", "answer": "3", "image": "q7.png"},
+    {"question": "What is value of the discriminant for this parabola?", "answer": "0", "image": "q8.png"},
+    {"question": "What is volume of this cube?", "answer": "100", "image": "q9.png"},
+    {"question": "What is area of this trapezium?", "answer": "20", "image": "q10.png"},
+]
+
+# List of expert-level question dictionaries with question, answer, and image.
+expert_question_data = [
+    {"question": "Differentiate with respect to x:", "answer": "6", "image": "q11.png"},
+    {"question": "What does the following trigonometric identity equal?", "answer": "1", "image": "q12.png"},
+    {"question": "Which number makes the equation below true?", "answer": "90", "image": "q13.png"},
+    {"question": "Which number makes the trigonometric identity below true?", "answer": "1", "image": "q14.png"},
+    {"question": "What is the value of r squared in the equation of this circle?", "answer": "4", "image": "q15.png"},
+    {"question": "What is the value of the exact value below?", "answer": "1", "image": "q16.png"},
+    {"question": "At which x-value is the gradient of the tangent to this curve equal to 0?", "answer": "3", "image": "q17.png"},
+    {"question": "At which x-value is the local minimum?", "answer": "3", "image": "q18.png"},
+    {"question": "What is the value of a squared in the equation of this ellipse?", "answer": "9", "image": "q19.png"},
+    {"question": "Differentiate with respect to x:", "answer": "0", "image": "q20.png"}
+]
+
+def main():
+    build_welcome_window()
+    build_difficulty_window()
+    build_basic_window()
+    build_advanced_window()
+    build_expert_window()
+    build_leaderboard()
+    welcome_window.mainloop()
 
 def build_welcome_window():  # This function creates the welcome window and all its widgets.
     global name_entry
@@ -90,9 +125,11 @@ def build_welcome_window():  # This function creates the welcome window and all 
 
     welcome_window.bind('<Return>', lambda event: name_entry_validation())
 
-def build_difficulty_window():  # This function builds the difficulty selection screen.
+def show_difficulty_window():  # This function builds the difficulty selection screen.
     difficulty_window.deiconify()
     welcome_window.withdraw()
+
+def build_difficulty_window():
 
     bg_difficulty_image = Image.open("kingdom_pathway.jpg")  # Replace with your image filename
     bg_difficulty_image = bg_difficulty_image.resize((600, 400))      # Resize to window size
@@ -127,7 +164,8 @@ def name_entry_validation():  # This function validates the name input before st
         messagebox.showerror(title="Invalid Input", message="The name entered must only contain letters. Try again.")
         name_entry.delete(0, 'end')
     else:
-        build_difficulty_window()
+        
+        show_difficulty_window()
 
 def end_program():  # This function ends the entire quiz program.
     welcome_window.destroy()
@@ -156,13 +194,16 @@ def show_basic_scoreboard():
     basic_window.withdraw()
     scoreboard_window.deiconify()
     basic_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    basic_score_label.pack(pady=10)
+    basic_score_label.place(relx=0.5, rely=0.15, anchor="center")
     basic_score_display = Label(scoreboard_window, text=f"Score: {scores['basic']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    basic_score_display.pack(pady=10)
+    basic_score_display.place(relx=0.5, rely=0.4, anchor="center")
     basic_exit = Button(scoreboard_window, text="Exit", command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
-    basic_exit.pack(pady=10)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
-    leaderboard_button.pack(pady=10)
+    basic_exit.place(relx=0.35, rely=0.6, anchor="center")
+    basic_leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
+    basic_leaderboard_button.place(relx=0.65, rely=0.6, anchor="center")
+    basic_restart_button = Button(scoreboard_window, text="Restart", command=restart, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#ff6600", fg="white")
+    basic_restart_button.place(relx=0.5, rely=0.8, anchor="center")
+    
     if scores["basic"] >= 70:
         save_basic_score()
         basic_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
@@ -190,13 +231,15 @@ def show_advanced_scoreboard():
     advanced_window.withdraw()
     scoreboard_window.deiconify()
     advanced_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    advanced_score_label.pack(pady=10)
+    advanced_score_label.place(relx=0.5, rely=0.15, anchor="center")
     advanced_score_display = Label(scoreboard_window, text=f"Score: {scores['advanced']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    advanced_score_display.pack()
+    advanced_score_display.place(relx=0.5, rely=0.4, anchor="center")
     advanced_exit = Button(scoreboard_window, text="Exit",  command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
-    advanced_exit.pack(pady=10)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
-    leaderboard_button.pack(pady=10)
+    advanced_exit.place(relx=0.35, rely=0.6, anchor="center")
+    advanced_leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
+    advanced_leaderboard_button.place(relx=0.65, rely=0.6, anchor="center")
+    advanced_restart_button = Button(scoreboard_window, text="Restart", command=restart, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#ff6600", fg="white")
+    advanced_restart_button.place(relx=0.5, rely=0.8, anchor="center")
     if scores["advanced"] >= 140:
         save_advanced_score()
         advanced_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
@@ -224,13 +267,15 @@ def show_expert_scoreboard():
     expert_window.withdraw()
     scoreboard_window.deiconify()
     expert_score_label = Label(scoreboard_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    expert_score_label.pack(pady=10)
+    expert_score_label.place(relx=0.5, rely=0.15, anchor="center")
     expert_score_display = Label(scoreboard_window, text=f"Score: {scores['expert']}", font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
-    expert_score_display.pack(pady=10)
+    expert_score_display.place(relx=0.5, rely=0.4, anchor="center")
     expert_exit = Button(scoreboard_window, text="Exit",  command=end_program, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
-    expert_exit.pack(pady=10)
-    leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
-    leaderboard_button.pack(pady=10)
+    expert_exit.place(relx=0.35, rely=0.6, anchor="center")
+    expert_leaderboard_button = Button(scoreboard_window, text="Leaderboard", command=show_leaderboard, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#009933", fg="white")
+    expert_leaderboard_button.place(relx=0.65, rely=0.6, anchor="center")
+    expert_restart_button = Button(scoreboard_window, text="Restart", command=restart, height=1, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#ff6600", fg="white")
+    expert_restart_button.place(relx=0.5, rely=0.8, anchor="center")
     if scores["expert"] >= 210:
         save_expert_score()
         expert_score_label.config(text=f"Congratulations {name_entry.get()}! \nYou saved The Counting Kingdom by defeating Algeblaze!")
@@ -261,6 +306,11 @@ def end_program():
         welcome_window.destroy()
 
 def basic_questions():
+    basic_window.deiconify()
+    difficulty_window.withdraw()
+
+def build_basic_window():
+    
     # Initialize counter for number of basic questions answered/skipped.
     global basic_question_count
     basic_question_count = 0
@@ -328,10 +378,6 @@ def basic_questions():
             show_basic_scoreboard()
         else:
             generate_basic_question()
-            
-    # Prepare the basic questions window and widgets.
-    basic_window.deiconify()
-    difficulty_window.withdraw()
 
     # Setup GUI widgets for basic questions window.
     basic_question = Label(basic_window, font=("Times New Roman", 20), bg="#e6f2ff", fg="#002147")
@@ -367,26 +413,14 @@ def advanced_questions():
     advanced_window.deiconify()
     difficulty_window.withdraw()
 
+def build_advanced_window():
+
     bg_advanced_image = Image.open("dragon2.jpg")
     bg_advanced_image = bg_advanced_image.resize((850, 650))
     bg_advanced_photo = ImageTk.PhotoImage(bg_advanced_image)
     bg_advanced_label = Label(advanced_window, image=bg_advanced_photo)
     bg_advanced_label.place(x=0, y=0, relwidth=1, relheight=1)
     bg_advanced_label.image = bg_advanced_photo
-
-    # List of advanced-level question dictionaries with question, answer, and image.
-    advanced_question_data = [
-        {"question": "What is the area of this shape?", "answer": "24", "image": "q1.png"},
-        {"question": "What is the length of side x?", "answer": "5", "image": "q2.png"},
-        {"question": "What is x-intercept of this parabola?", "answer": "4", "image": "q3.png"},
-        {"question": "What is x-coordinate of the point of inflexion?", "answer": "2", "image": "q4.png"},
-        {"question": "What is area of this parallelogram?", "answer": "150", "image": "q5.png"},
-        {"question": "What is gradient of this line?", "answer": "2", "image": "q6.png"},
-        {"question": "What is y-intercept of this parabola?", "answer": "3", "image": "q7.png"},
-        {"question": "What is value of the discriminant for this parabola?", "answer": "0", "image": "q8.png"},
-        {"question": "What is volume of this cube?", "answer": "100", "image": "q9.png"},
-        {"question": "What is area of this trapezium?", "answer": "20", "image": "q10.png"},
-    ]
 
     # Create a list to track which questions have not been asked yet.
     global remaining_advanced_questions
@@ -498,26 +532,14 @@ def expert_questions():
     expert_window.deiconify()
     difficulty_window.withdraw()
 
+def build_expert_window():
+
     bg_expert_image = Image.open("dragon3.jpg")
     bg_expert_image = bg_expert_image.resize((850, 650))
     bg_expert_photo = ImageTk.PhotoImage(bg_expert_image)
     bg_expert_label = Label(expert_window, image=bg_expert_photo)
     bg_expert_label.place(x=0, y=0, relwidth=1, relheight=1)
     bg_expert_label.image = bg_expert_photo
-
-    # List of expert-level question dictionaries with question, answer, and image.
-    expert_question_data = [
-        {"question": "Differentiate with respect to x:", "answer": "6", "image": "q11.png"},
-        {"question": "What does the following trigonometric identity equal?", "answer": "1", "image": "q12.png"},
-        {"question": "Which number makes the equation below true?", "answer": "90", "image": "q13.png"},
-        {"question": "Which number makes the trigonometric identity below true?", "answer": "1", "image": "q14.png"},
-        {"question": "What is the value of r squared in the equation of this circle?", "answer": "4", "image": "q15.png"},
-        {"question": "What is the value of the exact value below?", "answer": "1", "image": "q16.png"},
-        {"question": "At which x-value is the gradient of the tangent to this curve equal to 0?", "answer": "3", "image": "q17.png"},
-        {"question": "At which x-value is the local minimum?", "answer": "3", "image": "q18.png"},
-        {"question": "What is the value of a squared in the equation of this ellipse?", "answer": "9", "image": "q19.png"},
-        {"question": "Differentiate with respect to x:", "answer": "0", "image": "q20.png"}
-    ]
 
     # Create a list to track which questions have not been asked yet.
     global remaining_expert_questions
@@ -622,14 +644,21 @@ def expert_questions():
     # Generate the first expert question to begin.
     generate_expert_question()
 
-def show_leaderboard():
-    # Show leaderboard window and hide the scoreboard
-    leaderboard_window.deiconify()
-    scoreboard_window.withdraw()
+
+def build_leaderboard():
+    global bg_leaderboard_label, leaderboard_heading
+    
+    bg_leaderboard_image = Image.open("leaderboard.jpg")
+    bg_leaderboard_image = bg_leaderboard_image.resize((800, 500))
+    bg_leaderboard_photo = ImageTk.PhotoImage(bg_leaderboard_image)
+    bg_leaderboard_label = Label(leaderboard_window, image=bg_leaderboard_photo)
+    bg_leaderboard_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_leaderboard_label.image = bg_leaderboard_photo
 
     # Heading label
     leaderboard_heading = Label(leaderboard_window, text="The Counting Kingdom's Saviours", font=("Times New Roman", 25), bg="#e6f2ff", fg="#002147")
     leaderboard_heading.pack(pady=20)
+
 
     # Read scores from the file and display them
     with open("score.txt", "r") as file:
@@ -638,12 +667,52 @@ def show_leaderboard():
             leaderboard_score_label = Label(leaderboard_window, text=line.strip(), font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147")
             leaderboard_score_label.pack()
 
-    # Exit button to end program
-    exit_button = Button(leaderboard_window, text="Exit", command=end_program, font=("Times New Roman", 15), bg="#004080", fg="white")
-    exit_button.pack(pady=20)
+    def back():
+        leaderboard_window.withdraw()
+        scoreboard_window.deiconify()
 
+    # Exit button to end program
+    back_button = Button(leaderboard_window, text="Back to Scoreboard", command=back, width=15, borderwidth=2, font=("Times New Roman", 15), bg="#004080", fg="white")
+    back_button.pack(pady=20)
+
+def show_leaderboard():
+    leaderboard_window.deiconify()
+    scoreboard_window.withdraw()
+
+    # Remove just the score labels (leave heading, bg, and buttons alone)
+    for widget in leaderboard_window.winfo_children():
+        if isinstance(widget, Label) and widget not in [bg_leaderboard_label, leaderboard_heading]:
+            widget.destroy()
+
+    with open("score.txt", "r") as file:
+        for line in file:
+            Label(leaderboard_window, text=line.strip(), font=("Times New Roman", 15), bg="#e6f2ff", fg="#002147").pack()
+
+
+
+def restart():
+    global scores, basic_question_count, advanced_question_count, expert_question_count
+    global remaining_advanced_questions, remaining_expert_questions
+    global remaining_advanced_questions, remaining_expert_questions
+
+    scoreboard_window.withdraw()
+    welcome_window.deiconify()
+    name_entry.delete(0, 'end')
+
+    for widget in scoreboard_window.winfo_children():
+        if isinstance(widget, Label):
+            widget.destroy()
+
+    # Reset scores and counters
+    scores = {"basic": 0, "advanced": 0, "expert": 0}
+    basic_question_count = 0
+    advanced_question_count = 0
+    expert_question_count = 0
+
+    # Reset question trackers
+    remaining_advanced_questions = list(range(len(advanced_question_data)))
+    remaining_expert_questions = list(range(len(expert_question_data)))
 
 
 # Run the code by creating the welcome window and running the mainloop. 
-build_welcome_window()
-welcome_window.mainloop()
+main()
